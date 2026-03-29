@@ -117,17 +117,15 @@ body { background:radial-gradient(ellipse at 35% 55%, #cce0cc 0%, #dceedd 40%, #
 
   <div class="tracklist-wrap glass" style="padding:1.2rem 1rem;border-radius:14px;margin-top:1.2rem;">
     <p class="tracklist-title">playlist</p>
-    <ul class="tracklist" id="tracklist">
-      <li style="text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--matcha);opacity:.6;padding:1rem;font-size:.9rem;">Add songs below to embed them</li>
-    </ul>
+    <ul class="tracklist" id="tracklist"></ul>
   </div>
 
   <div class="add-music-wrap">
     <button class="add-music-btn" onclick="document.getElementById('music-file-input').click()">
-      ＋ Add &amp; Embed Songs
+      ＋ Add More Songs
     </button>
     <input type="file" id="music-file-input" accept="audio/*" multiple onchange="addTracks(this)">
-    <p class="embed-info">Songs are embedded as base64 — no external files needed ✦</p>
+    <p class="embed-info">Songs are saved to your browser session ✦</p>
   </div>
 </main>
 
@@ -137,39 +135,35 @@ body { background:radial-gradient(ellipse at 35% 55%, #cce0cc 0%, #dceedd 40%, #
 const audio = new Audio();
 audio.loop  = false;
 
-// ✏️ EMBEDDED TRACKS — paste base64 data URIs here
-// Format: { name: "Song Name", url: "data:audio/mp3;base64,..." }
-// To add: load a song via the button below; it will embed automatically.
-// You can also hardcode tracks here after embedding them once:
-//
-// let tracks = [
-//   { name: "Song Name", url: "data:audio/mpeg;base64,AAAA..." },
-// ];
-let tracks = [];
+// ✏️ FIXED: Added your two songs here
+let tracks = [
+  { name: "Music Track 1", url: "music1.mp3" },
+  { name: "Music Track 2", url: "music2.mp3" }
+];
 
 let current  = -1;
 let isPlaying = false;
 
 window.addEventListener('load', () => {
   buildGrille();
+  
+  // 1. Force the tracklist to render immediately
+  renderTracklist();
 
-  // restore from session (base64 src is stored)
+  // 2. Resume session or load the first song by default
   const savedSrc  = sessionStorage.getItem('steffy_music_src');
   const savedTime = parseFloat(sessionStorage.getItem('steffy_music_time') || '0');
   const savedPlay = sessionStorage.getItem('steffy_music_playing') === 'true';
 
-  if (savedSrc && savedSrc.startsWith('data:')) {
-    // find matching track or create a temporary entry
+  if (savedSrc) {
     let idx = tracks.findIndex(t => t.url === savedSrc);
-    if (idx === -1) {
-      const name = sessionStorage.getItem('steffy_music_name') || 'Track';
-      tracks.push({ name, url: savedSrc });
-      idx = tracks.length - 1;
+    if (idx !== -1) {
+      loadTrack(idx, savedPlay, savedTime);
+    } else {
+      loadTrack(0, false);
     }
-    renderTracklist();
-    loadTrack(idx, savedPlay, savedTime);
-  } else {
-    renderTracklist();
+  } else if (tracks.length > 0) {
+    loadTrack(0, false);
   }
 });
 
@@ -187,14 +181,13 @@ function addTracks(input) {
     const reader = new FileReader();
     reader.onload = e => {
       const name = f.name.replace(/\.[^/.]+$/,'').replace(/[-_]/g,' ');
-      tracks.push({ name, url: e.target.result }); // base64 data URI
+      tracks.push({ name, url: e.target.result }); 
       loaded++;
       if (loaded === files.length) {
         renderTracklist();
-        if (current === -1) loadTrack(0, false);
       }
     };
-    reader.readAsDataURL(f); // ← embeds as base64
+    reader.readAsDataURL(f);
   });
   input.value = '';
 }
@@ -202,10 +195,7 @@ function addTracks(input) {
 function renderTracklist() {
   const ul = document.getElementById('tracklist');
   ul.innerHTML = '';
-  if (!tracks.length) {
-    ul.innerHTML = '<li style="text-align:center;font-family:\'Cormorant Garamond\',serif;font-style:italic;color:var(--matcha);opacity:.6;padding:1rem;font-size:.9rem;">Add songs below to embed them</li>';
-    return;
-  }
+  
   tracks.forEach((t, i) => {
     const li = document.createElement('li');
     li.className = 'track-item' + (i===current?' active':'');
@@ -230,7 +220,6 @@ function loadTrack(idx, autoPlay=false, startTime=0) {
   audio.src = t.url;
   audio.currentTime = startTime;
 
-  // persist base64 so mini-player on other pages can resume
   sessionStorage.setItem('steffy_music_src',  t.url);
   sessionStorage.setItem('steffy_music_name', t.name);
   sessionStorage.setItem('steffy_music_time', startTime);
@@ -238,8 +227,11 @@ function loadTrack(idx, autoPlay=false, startTime=0) {
   document.getElementById('np-title').textContent = t.name;
   renderTracklist();
 
-  if (autoPlay) { audio.play(); setPlaying(true); }
-  else           { setPlaying(false); }
+  if (autoPlay) { 
+    audio.play().catch(e => console.log("Playback interaction required")); 
+    setPlaying(true); 
+  }
+  else { setPlaying(false); }
 }
 
 function setPlaying(p) {
@@ -247,8 +239,6 @@ function setPlaying(p) {
   document.getElementById('btn-play').textContent = p ? '⏸' : '▶';
   document.getElementById('record').classList.toggle('spinning', p);
   sessionStorage.setItem('steffy_music_playing', p);
-  const mpBtn = document.getElementById('mp-btn');
-  if (mpBtn) mpBtn.textContent = p ? '⏸' : '▶';
 }
 
 document.getElementById('btn-play').addEventListener('click', () => {
@@ -257,6 +247,7 @@ document.getElementById('btn-play').addEventListener('click', () => {
   else if (isPlaying) { audio.pause(); setPlaying(false); }
   else                { audio.play();  setPlaying(true);  }
 });
+
 document.getElementById('btn-next').addEventListener('click', () => loadTrack((current+1)%tracks.length, isPlaying));
 document.getElementById('btn-prev').addEventListener('click', () => loadTrack((current-1+tracks.length)%tracks.length, isPlaying));
 document.getElementById('btn-fwd').addEventListener('click',  () => { audio.currentTime = Math.min(audio.currentTime+10, audio.duration||0); });
@@ -271,6 +262,7 @@ function fmtTime(s) {
   if (!s||isNaN(s)) return '0:00';
   return Math.floor(s/60)+':'+(Math.floor(s%60)<10?'0':'')+Math.floor(s%60);
 }
+
 audio.addEventListener('timeupdate', () => {
   const pct = audio.duration ? (audio.currentTime/audio.duration)*100 : 0;
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -278,16 +270,14 @@ audio.addEventListener('timeupdate', () => {
   document.getElementById('time-dur').textContent = fmtTime(audio.duration);
   sessionStorage.setItem('steffy_music_time', audio.currentTime);
 });
+
 document.getElementById('progress-wrap').addEventListener('click', e => {
   if (!audio.duration) return;
   const r = e.currentTarget.getBoundingClientRect();
   audio.currentTime = ((e.clientX-r.left)/r.width)*audio.duration;
 });
+
 audio.addEventListener('ended', () => loadTrack((current+1)%tracks.length, true));
-window.addEventListener('beforeunload', () => {
-  sessionStorage.setItem('steffy_music_time', audio.currentTime);
-  sessionStorage.setItem('steffy_music_playing', !audio.paused);
-});
 </script>
 </body>
 </html>
