@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jukebox 🎵 · Steffy</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body { background:radial-gradient(ellipse at 35% 55%, #cce0cc 0%, #dceedd 40%, #f0f5ee 100%); min-height:100vh; padding-top:60px; }
+.juke-wrap { max-width:480px; margin:4rem auto 2rem; padding:0 1.5rem; text-align:center; }
+.page-title { font-family:'Petit Formal Script',cursive; font-size:2.4rem; color:var(--matcha-deep); margin-bottom:.3rem; text-shadow:0 2px 16px rgba(46,92,56,.18); }
+.page-sub { font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--matcha); font-size:.9rem; letter-spacing:.14em; margin-bottom:2.5rem; opacity:.7; }
+.jukebox { background:linear-gradient(160deg,#e8f2e6 0%,#d4e8d0 50%,#c4ddc0 100%); border-radius:28px 28px 20px 20px; border:2px solid rgba(122,171,128,.5); box-shadow:0 20px 60px rgba(46,92,56,.22),0 4px 0 rgba(74,122,82,.4),inset 0 1px 0 rgba(255,255,255,.8); padding:2rem 2rem 1.5rem; position:relative; overflow:hidden; }
+.jukebox::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold)); }
+.grille { display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-bottom:1.2rem; }
+.grille-dot { width:7px; height:7px; border-radius:50%; background:rgba(46,92,56,.2); box-shadow:inset 0 1px 2px rgba(0,0,0,.15); }
+.record-wrap { position:relative; width:140px; height:140px; margin:0 auto 1.5rem; }
+.record { width:140px; height:140px; border-radius:50%; background:conic-gradient(#1a2e1a 0deg 20deg,#2a4a2a 20deg 40deg,#1a2e1a 40deg 60deg,#2a4a2a 60deg 80deg,#1a2e1a 80deg 100deg,#2a4a2a 100deg 120deg,#1a2e1a 120deg 140deg,#2a4a2a 140deg 160deg,#1a2e1a 160deg 180deg,#2a4a2a 180deg 200deg,#1a2e1a 200deg 220deg,#2a4a2a 220deg 240deg,#1a2e1a 240deg 260deg,#2a4a2a 260deg 280deg,#1a2e1a 280deg 300deg,#2a4a2a 300deg 320deg,#1a2e1a 320deg 340deg,#2a4a2a 340deg 360deg); box-shadow:0 4px 20px rgba(0,0,0,.4); }
+.record.spinning { animation:spin 2.4s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.record-label { position:absolute; inset:35px; border-radius:50%; background:radial-gradient(circle at 40% 38%,#d4e8c8,#8ab890); display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 6px rgba(0,0,0,.2); }
+.record-label-text { font-family:'Petit Formal Script',cursive; font-size:.7rem; color:#2e5c38; text-align:center; line-height:1.3; }
+.record-hole { position:absolute;inset:0;margin:auto;width:10px;height:10px;border-radius:50%;background:#111;z-index:2; }
+.now-playing { background:rgba(46,92,56,.1); border-radius:10px; padding:.8rem 1rem; margin-bottom:1.2rem; border:1px solid rgba(122,171,128,.3); }
+.np-label { font-size:.58rem; letter-spacing:.28em; text-transform:uppercase; color:var(--matcha-dark); opacity:.6; margin-bottom:.3rem; }
+.np-title { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--matcha-deep); font-weight:400; min-height:1.4rem; }
+.progress-bar-wrap { background:rgba(46,92,56,.12); border-radius:4px; height:4px; margin:.8rem 0; cursor:pointer; }
+.progress-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--matcha-dark),var(--matcha)); transition:width .3s; width:0%; }
+.time-row { display:flex; justify-content:space-between; font-size:.62rem; color:var(--matcha-dark); opacity:.6; }
+.controls { display:flex; align-items:center; justify-content:center; gap:1rem; margin:1rem 0 .8rem; }
+.ctrl-btn { background:rgba(46,92,56,.12); border:1.5px solid rgba(122,171,128,.4); border-radius:50%; width:38px;height:38px; display:flex;align-items:center;justify-content:center; cursor:pointer;font-size:.85rem;color:var(--matcha-deep);transition:all .25s; }
+.ctrl-btn:hover { background:var(--matcha); color:var(--cream); border-color:var(--matcha); transform:scale(1.08); }
+.ctrl-btn.play-btn { width:54px;height:54px;font-size:1.1rem; background:var(--matcha-deep);color:var(--cream);border-color:var(--matcha-deep); box-shadow:0 4px 16px rgba(46,92,56,.35); }
+.ctrl-btn.play-btn:hover { background:var(--matcha); }
+.vol-row { display:flex; align-items:center; gap:.6rem; margin-top:.4rem; }
+.vol-icon { font-size:.85rem; color:var(--matcha-dark); opacity:.7; }
+.vol-slider { flex:1; -webkit-appearance:none; height:3px; background:rgba(46,92,56,.2); border-radius:3px; outline:none; cursor:pointer; }
+.vol-slider::-webkit-slider-thumb { -webkit-appearance:none; width:14px;height:14px;border-radius:50%; background:var(--matcha-dark); cursor:pointer; }
+.tracklist-wrap { margin-top:1.8rem; }
+.tracklist-title { font-size:.65rem; letter-spacing:.28em; text-transform:uppercase; color:var(--matcha-dark); margin-bottom:.8rem; opacity:.7; }
+.tracklist { list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+.track-item { display:flex; align-items:center; gap:.8rem; padding:.65rem .9rem; border-radius:10px; cursor:pointer; background:rgba(255,255,255,.4); border:1px solid rgba(122,171,128,.2); transition:all .25s; }
+.track-item:hover { background:rgba(255,255,255,.75); border-color:var(--matcha-light); transform:translateX(3px); }
+.track-item.active { background:rgba(122,171,128,.2); border-color:var(--matcha); }
+.track-num { font-size:.62rem; color:var(--matcha-dark); opacity:.5; width:16px; text-align:center; }
+.track-info { flex:1; text-align:left; }
+.track-name { font-size:.82rem; color:var(--ink); font-weight:300; }
+.track-eq { display:none; gap:2px; align-items:flex-end; }
+.track-item.active .track-eq { display:flex; }
+.track-item.active .track-num { display:none; }
+.eq-bar { width:3px; background:var(--matcha-dark); border-radius:2px; animation:eqBounce .5s ease infinite alternate; }
+.eq-bar:nth-child(2){animation-delay:.1s} .eq-bar:nth-child(3){animation-delay:.2s}
+@keyframes eqBounce { from{height:4px} to{height:14px} }
+.add-music-wrap { margin-top:1.2rem; }
+.add-music-btn { background:transparent; border:1.5px dashed rgba(122,171,128,.5); color:var(--matcha-dark); font-family:'Raleway',sans-serif; font-weight:300; font-size:.68rem; letter-spacing:.22em; text-transform:uppercase; padding:.7rem 1.8rem; border-radius:50px; cursor:pointer; transition:all .3s; display:inline-flex; align-items:center; gap:.5rem; }
+.add-music-btn:hover { border-color:var(--matcha); background:rgba(122,171,128,.1); }
+
+/* ── Embed notice ── */
+.embed-info { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:.78rem; color:var(--matcha-dark); opacity:.55; margin-top:.5rem; letter-spacing:.06em; }
+
+#music-file-input { display:none; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<nav class="nav-bar">
+  <a class="nav-logo" href="index.html">Steffy 💚</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="dukebox.html">Jukebox</a>
+    <a href="giftbox.html">Gift</a>
+    <a href="flower.html">Flowers</a>
+    <a href="video.html">Video</a>
+    <a href="letter.html">Letter</a>
+  </div>
+</nav>
+
+<main class="juke-wrap">
+  <h1 class="page-title">Our Jukebox</h1>
+  <p class="page-sub">songs that remind me of you</p>
+
+  <div class="jukebox">
+    <div class="grille" id="grille"></div>
+    <div class="record-wrap">
+      <div class="record" id="record">
+        <div class="record-label"><span class="record-label-text">for<br>Steffy</span></div>
+        <div class="record-hole"></div>
+      </div>
+    </div>
+    <div class="now-playing">
+      <div class="np-label">now playing</div>
+      <div class="np-title" id="np-title">— select a song —</div>
+    </div>
+    <div class="progress-bar-wrap" id="progress-wrap">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+    <div class="time-row">
+      <span id="time-cur">0:00</span>
+      <span id="time-dur">0:00</span>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn" id="btn-prev">⏮</button>
+      <button class="ctrl-btn" id="btn-rew">⏪</button>
+      <button class="ctrl-btn play-btn" id="btn-play">▶</button>
+      <button class="ctrl-btn" id="btn-fwd">⏩</button>
+      <button class="ctrl-btn" id="btn-next">⏭</button>
+    </div>
+    <div class="vol-row">
+      <span class="vol-icon">🔈</span>
+      <input class="vol-slider" type="range" id="vol-slider" min="0" max="1" step="0.02" value="0.6">
+      <span class="vol-icon">🔊</span>
+    </div>
+  </div>
+
+  <div class="tracklist-wrap glass" style="padding:1.2rem 1rem;border-radius:14px;margin-top:1.2rem;">
+    <p class="tracklist-title">playlist</p>
+    <ul class="tracklist" id="tracklist">
+      <li style="text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--matcha);opacity:.6;padding:1rem;font-size:.9rem;">Add songs below to embed them</li>
+    </ul>
+  </div>
+
+  <div class="add-music-wrap">
+    <button class="add-music-btn" onclick="document.getElementById('music-file-input').click()">
+      ＋ Add &amp; Embed Songs
+    </button>
+    <input type="file" id="music-file-input" accept="audio/*" multiple onchange="addTracks(this)">
+    <p class="embed-info">Songs are embedded as base64 — no external files needed ✦</p>
+  </div>
+</main>
+
+<script src="script.js"></script>
+<script>
+// ─── Audio engine ──────────────────────────────────────────
+const audio = new Audio();
+audio.loop  = false;
+
+// ✏️ EMBEDDED TRACKS — paste base64 data URIs here
+// Format: { name: "Song Name", url: "data:audio/mp3;base64,..." }
+// To add: load a song via the button below; it will embed automatically.
+// You can also hardcode tracks here after embedding them once:
+//
+// let tracks = [
+//   { name: "Song Name", url: "data:audio/mpeg;base64,AAAA..." },
+// ];
+let tracks = [];
+
+let current  = -1;
+let isPlaying = false;
+
+window.addEventListener('load', () => {
+  buildGrille();
+
+  // restore from session (base64 src is stored)
+  const savedSrc  = sessionStorage.getItem('steffy_music_src');
+  const savedTime = parseFloat(sessionStorage.getItem('steffy_music_time') || '0');
+  const savedPlay = sessionStorage.getItem('steffy_music_playing') === 'true';
+
+  if (savedSrc && savedSrc.startsWith('data:')) {
+    // find matching track or create a temporary entry
+    let idx = tracks.findIndex(t => t.url === savedSrc);
+    if (idx === -1) {
+      const name = sessionStorage.getItem('steffy_music_name') || 'Track';
+      tracks.push({ name, url: savedSrc });
+      idx = tracks.length - 1;
+    }
+    renderTracklist();
+    loadTrack(idx, savedPlay, savedTime);
+  } else {
+    renderTracklist();
+  }
+});
+
+function buildGrille() {
+  const g = document.getElementById('grille');
+  for (let i = 0; i < 35; i++) {
+    const d = document.createElement('div'); d.className='grille-dot'; g.appendChild(d);
+  }
+}
+
+function addTracks(input) {
+  const files = Array.from(input.files);
+  let loaded = 0;
+  files.forEach(f => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const name = f.name.replace(/\.[^/.]+$/,'').replace(/[-_]/g,' ');
+      tracks.push({ name, url: e.target.result }); // base64 data URI
+      loaded++;
+      if (loaded === files.length) {
+        renderTracklist();
+        if (current === -1) loadTrack(0, false);
+      }
+    };
+    reader.readAsDataURL(f); // ← embeds as base64
+  });
+  input.value = '';
+}
+
+function renderTracklist() {
+  const ul = document.getElementById('tracklist');
+  ul.innerHTML = '';
+  if (!tracks.length) {
+    ul.innerHTML = '<li style="text-align:center;font-family:\'Cormorant Garamond\',serif;font-style:italic;color:var(--matcha);opacity:.6;padding:1rem;font-size:.9rem;">Add songs below to embed them</li>';
+    return;
+  }
+  tracks.forEach((t, i) => {
+    const li = document.createElement('li');
+    li.className = 'track-item' + (i===current?' active':'');
+    li.innerHTML = `
+      <span class="track-num">${i+1}</span>
+      <div class="track-eq">
+        <div class="eq-bar" style="height:8px"></div>
+        <div class="eq-bar" style="height:12px"></div>
+        <div class="eq-bar" style="height:6px"></div>
+      </div>
+      <div class="track-info"><div class="track-name">${t.name}</div></div>
+    `;
+    li.addEventListener('click', () => loadTrack(i, true));
+    ul.appendChild(li);
+  });
+}
+
+function loadTrack(idx, autoPlay=false, startTime=0) {
+  if (idx < 0 || idx >= tracks.length) return;
+  current = idx;
+  const t = tracks[idx];
+  audio.src = t.url;
+  audio.currentTime = startTime;
+
+  // persist base64 so mini-player on other pages can resume
+  sessionStorage.setItem('steffy_music_src',  t.url);
+  sessionStorage.setItem('steffy_music_name', t.name);
+  sessionStorage.setItem('steffy_music_time', startTime);
+
+  document.getElementById('np-title').textContent = t.name;
+  renderTracklist();
+
+  if (autoPlay) { audio.play(); setPlaying(true); }
+  else           { setPlaying(false); }
+}
+
+function setPlaying(p) {
+  isPlaying = p;
+  document.getElementById('btn-play').textContent = p ? '⏸' : '▶';
+  document.getElementById('record').classList.toggle('spinning', p);
+  sessionStorage.setItem('steffy_music_playing', p);
+  const mpBtn = document.getElementById('mp-btn');
+  if (mpBtn) mpBtn.textContent = p ? '⏸' : '▶';
+}
+
+document.getElementById('btn-play').addEventListener('click', () => {
+  if (!tracks.length) return;
+  if (current === -1) loadTrack(0, true);
+  else if (isPlaying) { audio.pause(); setPlaying(false); }
+  else                { audio.play();  setPlaying(true);  }
+});
+document.getElementById('btn-next').addEventListener('click', () => loadTrack((current+1)%tracks.length, isPlaying));
+document.getElementById('btn-prev').addEventListener('click', () => loadTrack((current-1+tracks.length)%tracks.length, isPlaying));
+document.getElementById('btn-fwd').addEventListener('click',  () => { audio.currentTime = Math.min(audio.currentTime+10, audio.duration||0); });
+document.getElementById('btn-rew').addEventListener('click',  () => { audio.currentTime = Math.max(audio.currentTime-10, 0); });
+
+document.getElementById('vol-slider').addEventListener('input', e => {
+  audio.volume = e.target.value;
+  sessionStorage.setItem('steffy_music_vol', e.target.value);
+});
+
+function fmtTime(s) {
+  if (!s||isNaN(s)) return '0:00';
+  return Math.floor(s/60)+':'+(Math.floor(s%60)<10?'0':'')+Math.floor(s%60);
+}
+audio.addEventListener('timeupdate', () => {
+  const pct = audio.duration ? (audio.currentTime/audio.duration)*100 : 0;
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('time-cur').textContent = fmtTime(audio.currentTime);
+  document.getElementById('time-dur').textContent = fmtTime(audio.duration);
+  sessionStorage.setItem('steffy_music_time', audio.currentTime);
+});
+document.getElementById('progress-wrap').addEventListener('click', e => {
+  if (!audio.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX-r.left)/r.width)*audio.duration;
+});
+audio.addEventListener('ended', () => loadTrack((current+1)%tracks.length, true));
+window.addEventListener('beforeunload', () => {
+  sessionStorage.setItem('steffy_music_time', audio.currentTime);
+  sessionStorage.setItem('steffy_music_playing', !audio.paused);
+});
+</script>
+</body>
+</html>

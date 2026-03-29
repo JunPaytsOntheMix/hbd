@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Letter for Steffy 💌</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body {
+  background:radial-gradient(ellipse at 40% 50%, #cce0cc 0%, #deeede 45%, #f0f5ee 100%);
+  min-height:100vh; padding-top:60px; display:flex;
+  flex-direction:column; align-items:center;
+}
+
+.letter-page { max-width:640px; width:100%; padding:3rem 1.5rem 5rem; text-align:center; }
+
+.page-title { font-family:'Petit Formal Script',cursive; font-size:2.4rem; color:var(--matcha-deep); margin-bottom:.3rem; }
+.page-sub { font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--matcha); font-size:.9rem; letter-spacing:.15em; opacity:.7; margin-bottom:3rem; }
+
+/* ── ENVELOPE ── */
+.envelope-scene { position:relative; display:inline-block; cursor:pointer; }
+.envelope { width:min(420px,88vw); position:relative; filter:drop-shadow(0 14px 40px rgba(46,92,56,.22)); transition:filter .3s; }
+.envelope:hover { filter:drop-shadow(0 20px 55px rgba(46,92,56,.32)); }
+
+.env-body {
+  width:100%; padding-top:62%;
+  background:linear-gradient(155deg,#c8e0c4,#a8cca8,#8ab890);
+  border-radius:6px; position:relative; overflow:visible;
+  border:1.5px solid rgba(122,171,128,.5);
+  box-shadow:0 4px 0 rgba(74,122,82,.3), inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+.env-inside { position:absolute; inset:0; border-radius:6px; background:linear-gradient(170deg, rgba(255,255,230,.5) 0%, transparent 70%); opacity:0; transition:opacity .5s ease .3s; }
+.env-open .env-inside { opacity:1; }
+
+.env-body::before { content:''; position:absolute; bottom:0; left:0; right:0; border-left: calc(min(420px,88vw)/2) solid rgba(100,160,100,.35); border-right: calc(min(420px,88vw)/2) solid rgba(100,160,100,.35); border-bottom:calc(min(420px,88vw)*.28) solid rgba(100,160,100,.35); }
+.env-body::after { content:''; position:absolute; top:0; left:0; right:0; border-left: calc(min(420px,88vw)/2) solid rgba(100,160,100,.25); border-right: calc(min(420px,88vw)/2) solid rgba(100,160,100,.25); border-top: calc(min(420px,88vw)*.3) solid rgba(100,160,100,.25); }
+
+.env-flap { position:absolute; top:0; left:0; right:0; height:0; z-index:5; border-left: calc(min(420px,88vw)/2) solid transparent; border-right: calc(min(420px,88vw)/2) solid transparent; border-top: calc(min(420px,88vw)*.32) solid #9ec898; transform-origin:top center; transition:transform .9s cubic-bezier(.2,.8,.3,1); filter:drop-shadow(0 3px 8px rgba(46,92,56,.2)); }
+.env-flap.open { transform:rotateX(-185deg); }
+
+.env-seal { position:absolute; top:46%; left:50%; transform:translate(-50%,-50%); width:52px; height:52px; border-radius:50%; background:radial-gradient(circle at 38% 36%,#e8d090,#c8a84b); box-shadow:0 3px 12px rgba(0,0,0,.2); z-index:6; display:flex; align-items:center; justify-content:center; font-size:1.4rem; transition:all .5s ease; }
+.env-open .env-seal { opacity:0; transform:translate(-50%,-80%) scale(.4); }
+
+.letter-peek { position:absolute; bottom:0; left:50%; z-index:4; transform:translateX(-50%) translateY(0); width:84%; height:88%; background:linear-gradient(170deg,#faf7ee,#f0ede0); border-radius:3px 3px 0 0; box-shadow:0 -4px 20px rgba(0,0,0,.12); transition:transform .9s cubic-bezier(.2,.8,.3,1) .25s; display:flex; align-items:flex-start; justify-content:center; padding-top:1rem; overflow:hidden; }
+.letter-peek.rising { transform:translateX(-50%) translateY(-52%); }
+.peek-preview { font-family:'Petit Formal Script',cursive; font-size:1.2rem; color:rgba(58,96,64,.3); text-align:center; padding:.5rem; }
+
+.env-hint { margin-top:1.2rem; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:.85rem; color:var(--matcha-dark); opacity:.55; animation:hintBlink 2.2s ease-in-out infinite; }
+@keyframes hintBlink { 0%,100%{opacity:.3} 50%{opacity:.75} }
+.read-btn-wrap { margin-top:1.5rem; opacity:0; transform:translateY(10px); transition:all .5s ease .3s; }
+.read-btn-wrap.show { opacity:1; transform:none; }
+
+/* ── LETTER CARD ── */
+.letter-outer { opacity:0; transform:translateY(24px) scale(.98); transition:opacity .8s ease, transform .8s ease; margin-top:2.5rem; }
+.letter-outer.show { opacity:1; transform:none; }
+
+.letter-card {
+  width:100%; max-width:580px; margin:0 auto;
+  background: radial-gradient(ellipse at 10% 10%, rgba(184,216,188,.35) 0%, transparent 55%), radial-gradient(ellipse at 90% 90%, rgba(200,168,75,.12) 0%, transparent 50%), linear-gradient(155deg,#faf7ee 0%,#f4f0e4 50%,#eef0e4 100%);
+  border-radius:4px; padding:4rem 3.5rem; position:relative; box-shadow:0 24px 70px rgba(46,92,56,.18), 0 0 0 1px rgba(122,171,128,.25);
+}
+
+.letter-card::before { content:''; position:absolute; inset:0; pointer-events:none; border-radius:4px; background:repeating-linear-gradient(transparent, transparent 27px, rgba(122,171,128,.16) 27px, rgba(122,171,128,.16) 28px); }
+.letter-card::after { content:''; position:absolute; left:3.5rem; top:0; bottom:0; width:1px; background:rgba(200,168,75,.18); }
+
+.lc { position:absolute; font-size:1.4rem; opacity:0.18; }
+.lc.tl{top:.8rem;left:.8rem} .lc.tr{top:.8rem;right:.8rem;transform:scaleX(-1)}
+.lc.bl{bottom:.8rem;left:.8rem;transform:scaleY(-1)} .lc.br{bottom:.8rem;right:.8rem;transform:scale(-1)}
+
+.l-stamp { position:absolute; top:1.2rem; right:1.2rem; width:50px; height:62px; background:linear-gradient(145deg,#c8e0c4,#8ab890); border:2px solid rgba(122,171,128,.5); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; box-shadow:inset 0 0 0 3px rgba(255,255,255,0.4), 0 2px 8px rgba(46,92,56,0.18); }
+.l-stamp::before { content:'';position:absolute;inset:-6px;border-radius:3px; background:radial-gradient(circle,transparent 35%,rgba(240,245,238,0.9) 35%,rgba(240,245,238,0.9) 65%,transparent 65%); background-size:8px 8px; }
+
+.l-date { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;color:#6a8a60;letter-spacing:.14em;margin-bottom:2rem;opacity:.7; }
+.l-dear { font-family:'Petit Formal Script',cursive;font-size:2rem;color:#3a6040;margin-bottom:1.4rem;line-height:1.3; }
+
+.l-body { font-family:'Cormorant Garamond',serif;font-size:1.08rem;line-height:2;color:#2a3a28;font-weight:300; text-align: left; }
+.l-body p { margin-bottom:1.1rem; }
+.l-body .hi { color:#3a6040;font-style:italic;font-weight:400; }
+
+.l-sign { margin-top:2rem;text-align:right; }
+.l-sign-lbl { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.88rem;color:#6a8a60;opacity:.7;margin-bottom:.3rem; }
+.l-sign-name { font-family:'Petit Formal Script',cursive;font-size:2rem;color:#3a6040; }
+
+.l-ps { margin-top:1.8rem;padding-top:1.4rem;border-top:1px solid rgba(58,96,64,0.15); font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.88rem;color:#6a8a60;line-height:1.7;opacity:.8; text-align: left; }
+.doodle { position:absolute;font-size:1rem;opacity:0.12;pointer-events:none; }
+.letter-footer { margin-top:2rem;font-size:1.1rem;text-align:center;opacity:0.4;letter-spacing:0.4em; }
+.back-row { margin-top:2.5rem;text-align:center; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<nav class="nav-bar">
+  <a class="nav-logo" href="index.html">Steffy 💚</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="dukebox.html">Jukebox</a>
+    <a href="giftbox.html">Gift</a>
+    <a href="flower.html">Flowers</a>
+    <a href="video.html">Video</a>
+    <a href="letter.html">Letter</a>
+  </div>
+</nav>
+
+<main class="letter-page">
+  <h1 class="page-title">A Letter for You 💌</h1>
+  <p class="page-sub">sealed with a thousand feelings</p>
+
+  <div class="envelope-scene" id="env-scene">
+    <div class="envelope" onclick="openEnvelope()">
+      <div class="env-body">
+        <div class="env-inside"></div>
+        <div class="env-flap" id="env-flap"></div>
+        <div class="env-seal" id="env-seal">💚</div>
+        <div class="letter-peek" id="letter-peek">
+          <div class="peek-preview">To my dearest…</div>
+        </div>
+      </div>
+    </div>
+    <p class="env-hint" id="env-hint">✦ click to open ✦</p>
+    <div class="read-btn-wrap" id="read-btn-wrap">
+      <button class="btn btn-filled" onclick="showLetter()">Read the letter →</button>
+    </div>
+  </div>
+
+  <div class="letter-outer" id="letter-outer">
+    <div class="letter-card">
+      <span class="lc tl">✿</span><span class="lc tr">✿</span>
+      <span class="lc bl">✿</span><span class="lc br">✿</span>
+
+      <div class="l-stamp">💌</div>
+
+      <span class="doodle" style="top:18%;left:6%">💚</span>
+      <span class="doodle" style="top:42%;left:4%">✦</span>
+      <span class="doodle" style="top:68%;left:5%">🌸</span>
+      <span class="doodle" style="bottom:18%;right:5%">✿</span>
+
+      <p class="l-date" id="l-date"></p>
+      <p class="l-dear">Hello Baby,</p>
+
+      <div class="l-body">
+        <p>Unsa sa lahat, <span class="hi">happy birthday baby ko</span> hehehehe. Tanda mona baby ko hmp, humahabol kana sa edad ko hehe, pero jk lang yun baby.</p>
+        
+        <p>Diko talaga to forte ang pag susulat or pag gawa ng letter pero para sayo g, ano jaaay.</p>
+
+        <p>Gusto ko lang malaman mo na <span class="hi">napaka swerte ko kase dumating ka sa life ko</span>, thank you kase ikaw binigay sakin ng may kapal kahit makapal muka ko.</p>
+        
+        <p>Thank you sa pag spoil sakin kahit diko deserve yun, thankyou kase hindi lang ako nakahanap ng partner, nakahanap din ako ng <span class="hi">katuwang sa buhay</span>, yung susupportahan ka sa lahat ng bagay, yung pag tatanggol ka, karamay mo sa lahat ng bagay.</p>
+
+        <p>Kaya maraming salamat baby ko, masaya akong ikaw ang baby ko hehehehe. Salamat sa maganda, cute, matalino and higit sa lahat <span class="hi">magaling mag midlane sheesh</span> iloveyousomuch baby ko mwauaaaah!</p>
+      </div>
+
+      <div class="l-sign">
+        <p class="l-sign-lbl">Always yours ✦</p>
+        <p class="l-sign-name">Heljun</p>
+      </div>
+
+      <div class="l-ps">
+        P.S. — Enjoy your day baby ko and wish ko na matupad lahat ng pangarap mo sa buhay, gabayan ka ni god sa lahat ng desisyon mo, always remember baby na andito lang ako para sayo okay. Stay safe baby ko and iloveyousomuch mwuaaaaah! 💚
+      </div>
+
+      <div class="letter-footer">💚 ✦ 🌸 ✦ 💚</div>
+    </div>
+
+    <div class="back-row">
+      <a href="index.html" class="btn btn-outline" style="margin-top:1rem;">← Back to Home</a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+<script>
+let envOpened = false;
+
+document.getElementById('l-date').textContent =
+  new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+
+function openEnvelope() {
+  if (envOpened) return;
+  envOpened = true;
+
+  const scene   = document.getElementById('env-scene');
+  const flap    = document.getElementById('env-flap');
+  const peek    = document.getElementById('letter-peek');
+  const hint    = document.getElementById('env-hint');
+  const readBtn = document.getElementById('read-btn-wrap');
+
+  scene.querySelector('.envelope').classList.add('env-open');
+  flap.classList.add('open');
+  hint.style.opacity = '0';
+
+  setTimeout(() => { peek.classList.add('rising'); }, 300);
+  setTimeout(() => { readBtn.classList.add('show'); }, 900);
+
+  const env = document.querySelector('.envelope');
+  const r   = env.getBoundingClientRect();
+  for (let i = 0; i < 16; i++) {
+    setTimeout(() => {
+      const sp = document.createElement('div');
+      sp.style.cssText = `
+        position:fixed;z-index:99;pointer-events:none;
+        left:${r.left+r.width/2}px;top:${r.top+r.height*.4}px;
+        font-size:${.7+Math.random()*.7}rem;
+        animation:spFleur .8s ease forwards;
+        --tx:${(Math.random()-.5)*140}px;
+        --ty:${(Math.random()-.5)*80}px;
+      `;
+      sp.textContent=['💚','✦','✿','🌸','💚'][Math.floor(Math.random()*5)];
+      document.body.appendChild(sp);
+      setTimeout(()=>sp.remove(),900);
+    }, i*40);
+  }
+}
+
+function showLetter() {
+  const letter = document.getElementById('letter-outer');
+  letter.classList.add('show');
+  setTimeout(() => letter.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+
+  const paras = letter.querySelectorAll('.l-body p, .l-dear, .l-date, .l-sign, .l-ps, .letter-footer');
+  paras.forEach((p, i) => {
+    p.style.opacity = '0';
+    p.style.transform = 'translateY(12px)';
+    p.style.transition = `opacity .6s ease ${.1+i*.12}s, transform .6s ease ${.1+i*.12}s`;
+    setTimeout(() => {
+      p.style.opacity = '1';
+      p.style.transform = 'none';
+    }, 100);
+  });
+}
+</script>
+<style>
+@keyframes spFleur {
+  from { opacity:1; transform:translate(0,0) scale(1); }
+  to   { opacity:0; transform:translate(var(--tx),var(--ty)) scale(.2); }
+}
+</style>
+</body>
+</html>

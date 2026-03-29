@@ -1,0 +1,159 @@
+/* ============================================================
+   STEFFY BIRTHDAY SYSTEM — style.css
+   Shared across all pages
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Petit+Formal+Script&family=Raleway:wght@200;300;400&display=swap');
+
+/* ── Variables ── */
+:root {
+  --bg:          #f0f5ee;
+  --bg-deep:     #e4ede0;
+  --matcha:      #7aab80;
+  --matcha-dark: #4a7a52;
+  --matcha-deep: #2e5c38;
+  --matcha-light:#b8d8bc;
+  --matcha-pale: #dceedd;
+  --gold:        #c8a84b;
+  --gold-light:  #e8d090;
+  --cream:       #faf7ee;
+  --ink:         #1e2e1a;
+  --ink-soft:    #3a5040;
+  --white:       #ffffff;
+  --shadow:      rgba(46,92,56,.18);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Custom cursor ── */
+/* ── Cute Custom Cursor ── */
+#cursor {
+  position: fixed;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem; /* Size of the heart */
+  transition: transform 0.1s ease-out;
+}
+
+#cursor-trail {
+  position: fixed;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  z-index: 9999;
+  background: var(--gold-light);
+  border-radius: 50%;
+  opacity: 0.6;
+  transform: translate(-50%, -50%);
+  filter: blur(2px);
+  transition: left 0.15s ease-out, top 0.15s ease-out;
+}
+
+/* Hide the default mouse cursor across the whole system */
+html, body, a, button {
+  cursor: none !important;
+}
+/* ── Floating leaves ── */
+.leaf {
+  position: fixed; pointer-events: none; z-index: 1;
+  font-size: .9rem; opacity: 0;
+  animation: leafFloat linear infinite;
+}
+@keyframes leafFloat {
+  0%   { transform: translateY(110vh) rotate(0deg);   opacity: 0; }
+  8%   { opacity: .7; }
+  92%  { opacity: .5; }
+  100% { transform: translateY(-10vh) rotate(540deg); opacity: 0; }
+}
+
+/* ── Page fade in ── */
+.page-enter {
+  animation: pageIn .7s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Glass card ── */
+.glass {
+  background: rgba(250,247,238,.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(184,216,188,.6);
+  border-radius: 16px;
+  box-shadow: 0 8px 40px var(--shadow);
+}
+
+/* ── Shared nav bar (music persists via localStorage) ── */
+.nav-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .6rem 1.5rem;
+  background: rgba(224,237,222,.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(122,171,128,.25);
+}
+.nav-logo {
+  font-family: 'Petit Formal Script', cursive;
+  font-size: 1.2rem; color: var(--matcha-dark);
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 1.4rem; align-items: center; }
+.nav-links a {
+  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--ink-soft); text-decoration: none; transition: color .25s;
+  font-weight: 300;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--matcha-dark); }
+
+/* ── Shared button styles ── */
+.btn {
+  font-family: 'Raleway', sans-serif; font-weight: 300; font-size: .72rem;
+  letter-spacing: .28em; text-transform: uppercase; cursor: pointer;
+  transition: all .3s; border-radius: 50px; padding: .85rem 2.4rem;
+  display: inline-block; text-decoration: none;
+}
+.btn-filled {
+  background: var(--matcha-dark); color: var(--cream); border: none;
+  box-shadow: 0 6px 20px rgba(46,92,56,.3);
+}
+.btn-filled:hover { background: var(--matcha); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(46,92,56,.35); }
+.btn-outline {
+  background: transparent; color: var(--matcha-dark);
+  border: 1.5px solid var(--matcha);
+}
+.btn-outline:hover { background: var(--matcha-pale); transform: translateY(-1px); }
+
+/* ── Stars / sparkles ── */
+.sparkle {
+  position: absolute; pointer-events: none;
+  animation: sparkPop .6s ease forwards;
+}
+@keyframes sparkPop {
+  0%   { transform: scale(0) rotate(0deg);   opacity: 1; }
+  60%  { transform: scale(1.4) rotate(180deg); opacity: .8; }
+  100% { transform: scale(0) rotate(360deg); opacity: 0; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--matcha-light); border-radius: 3px; }

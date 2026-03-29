@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Steffy 💚</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Index-specific ── */
+body { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; background: radial-gradient(ellipse at 40% 55%, #d4ebd6 0%, #e8f0e4 50%, #f0f5ee 100%); }
+
+.entry-wrap { text-align:center; position:relative; z-index:10; }
+
+.entry-title {
+  font-family:'Petit Formal Script',cursive;
+  font-size:clamp(2rem,7vw,3.6rem);
+  color:var(--matcha-deep);
+  text-shadow:0 2px 20px rgba(46,92,56,.2);
+  margin-bottom:.4rem;
+  animation:titleDrop .9s cubic-bezier(.2,.8,.3,1) both;
+}
+.entry-date {
+  font-family:'Cormorant Garamond',serif; font-style:italic; font-size:.9rem;
+  color:var(--matcha); letter-spacing:.2em; margin-bottom:3.5rem; opacity:.7;
+  animation:titleDrop .9s cubic-bezier(.2,.8,.3,1) .15s both;
+}
+@keyframes titleDrop { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
+
+/* ── Fingerprint scanner ── */
+.scanner-wrap {
+  position:relative; display:inline-block;
+  animation:titleDrop .9s cubic-bezier(.2,.8,.3,1) .3s both;
+}
+
+.scanner {
+  width:160px; height:160px; border-radius:50%; position:relative;
+  cursor:pointer; margin:0 auto;
+  background: radial-gradient(circle at 40% 38%, #c8deca, #8ab890, #4a7a52);
+  box-shadow:
+    0 0 0 8px rgba(122,171,128,.15),
+    0 0 0 16px rgba(122,171,128,.08),
+    0 8px 40px rgba(46,92,56,.35);
+  display:flex; align-items:center; justify-content:center;
+  transition:box-shadow .4s, transform .3s;
+}
+.scanner:hover {
+  transform:scale(1.04);
+  box-shadow:
+    0 0 0 10px rgba(122,171,128,.2),
+    0 0 0 20px rgba(122,171,128,.1),
+    0 10px 50px rgba(46,92,56,.4);
+}
+
+/* spinning ring */
+.scanner::before {
+  content:''; position:absolute; inset:-6px; border-radius:50%;
+  border:2px solid transparent;
+  border-top-color:var(--gold); border-right-color:var(--gold-light);
+  animation:scanSpin 2.4s linear infinite;
+}
+@keyframes scanSpin { to{transform:rotate(360deg)} }
+
+/* fingerprint svg lines */
+.fp-svg {
+  width:72px; height:72px; opacity:.9;
+  filter:drop-shadow(0 0 8px rgba(255,255,255,.5));
+}
+.fp-line {
+  stroke:#e8f5e9; stroke-width:2.2; fill:none; stroke-linecap:round;
+  stroke-dasharray:200; stroke-dashoffset:200;
+}
+.scanner.scanning .fp-line {
+  animation:scanLine 1.8s ease forwards;
+}
+@keyframes scanLine {
+  to { stroke-dashoffset:0; }
+}
+
+/* scan pulse */
+.scan-pulse {
+  position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(255,255,255,.45) 0%, transparent 70%);
+  opacity:0;
+}
+.scanner.scanning .scan-pulse { animation:pulse 1.8s ease forwards; }
+@keyframes pulse { 0%{opacity:0} 30%{opacity:.6} 100%{opacity:0} }
+
+/* ── Scan beam ── */
+.scan-beam {
+  position:absolute; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, transparent, rgba(200,240,200,.8), transparent);
+  top:50%; transform:translateY(-50%);
+  opacity:0; pointer-events:none;
+}
+.scanner.scanning .scan-beam { animation:beamSweep 1.8s ease forwards; }
+@keyframes beamSweep {
+  0%   { opacity:0; top:10%; }
+  20%  { opacity:1; }
+  80%  { opacity:1; }
+  100% { opacity:0; top:90%; }
+}
+
+.scanner-label {
+  margin-top:1.4rem; font-size:.68rem; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--matcha-dark); opacity:.65;
+  animation:labelBlink 2s ease-in-out infinite;
+}
+@keyframes labelBlink { 0%,100%{opacity:.45} 50%{opacity:.9} }
+
+/* ── Welcome message ── */
+.welcome-msg {
+  margin-top:2.8rem;
+  font-family:'Petit Formal Script',cursive;
+  font-size:clamp(1.6rem,5vw,2.4rem);
+  color:var(--matcha-deep);
+  opacity:0; transform:scale(.9) translateY(10px);
+  transition:opacity .8s ease, transform .8s ease;
+  text-shadow:0 2px 16px rgba(46,92,56,.2);
+  min-height:3rem;
+}
+.welcome-msg.show { opacity:1; transform:none; }
+
+.welcome-sub {
+  font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1rem;
+  color:var(--matcha); letter-spacing:.15em; margin-top:.5rem;
+  opacity:0; transition:opacity .6s ease .4s;
+}
+.welcome-sub.show { opacity:.8; }
+
+/* ── Enter button ── */
+.enter-btn-wrap {
+  margin-top:2.5rem; opacity:0; transform:translateY(10px);
+  transition:opacity .6s ease .6s, transform .6s ease .6s;
+}
+.enter-btn-wrap.show { opacity:1; transform:none; }
+
+/* ── Nav menu (shown after auth) ── */
+.page-menu {
+  margin-top:3.5rem; display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1rem; max-width:520px; width:90vw; opacity:0; transition:opacity .5s ease .8s;
+}
+.page-menu.show { opacity:1; }
+
+.menu-card {
+  background:rgba(255,255,255,.5); border:1px solid rgba(122,171,128,.35);
+  border-radius:14px; padding:1.2rem .8rem; text-align:center; text-decoration:none;
+  transition:all .3s; backdrop-filter:blur(8px);
+}
+.menu-card:hover {
+  background:rgba(255,255,255,.8); transform:translateY(-4px);
+  box-shadow:0 8px 24px var(--shadow); border-color:var(--matcha);
+}
+.menu-card-icon { font-size:1.6rem; display:block; margin-bottom:.4rem; }
+.menu-card-label {
+  font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--matcha-dark); font-weight:300;
+}
+
+/* ── Decorative blobs ── */
+.blob {
+  position:fixed; border-radius:50%; pointer-events:none; z-index:0; filter:blur(60px);
+}
+.blob1 { width:320px;height:320px;background:rgba(122,171,128,.18);top:-80px;left:-80px; }
+.blob2 { width:260px;height:260px;background:rgba(200,168,75,.12);bottom:-60px;right:-60px; }
+.blob3 { width:200px;height:200px;background:rgba(122,171,128,.12);bottom:20%;left:10%; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<main class="entry-wrap">
+  <h1 class="entry-title">Happy Birthday, Steffy</h1>
+  <p class="entry-date">something special is waiting for you</p>
+
+  <!-- Fingerprint scanner -->
+  <div class="scanner-wrap">
+    <div class="scanner" id="scanner" onclick="startScan()">
+      <div class="scan-beam"></div>
+      <div class="scan-pulse"></div>
+      <!-- Fingerprint lines as SVG -->
+      <svg class="fp-svg" viewBox="0 0 72 72">
+        <!-- outer arcs - fingerprint look -->
+        <path class="fp-line" d="M 36 8 C 18 8 6 21 6 36 C 6 52 18 65 36 65" style="animation-delay:.0s"/>
+        <path class="fp-line" d="M 36 8 C 54 8 66 21 66 36 C 66 52 54 65 36 65" style="animation-delay:.08s"/>
+        <path class="fp-line" d="M 36 15 C 22 15 13 24 13 36 C 13 49 22 58 36 58" style="animation-delay:.16s"/>
+        <path class="fp-line" d="M 36 15 C 50 15 59 24 59 36 C 59 49 50 58 36 58" style="animation-delay:.24s"/>
+        <path class="fp-line" d="M 36 22 C 26 22 20 28 20 36 C 20 45 26 50 36 50" style="animation-delay:.32s"/>
+        <path class="fp-line" d="M 36 22 C 46 22 52 28 52 36 C 52 45 46 50 36 50" style="animation-delay:.40s"/>
+        <path class="fp-line" d="M 28 36 C 28 31 32 28 36 28 C 40 28 44 31 44 36 C 44 41 40 44 36 44" style="animation-delay:.48s"/>
+        <path class="fp-line" d="M 36 28 C 36 28 36 36 36 42" style="animation-delay:.54s"/>
+      </svg>
+    </div>
+    <p class="scanner-label" id="scanner-label">touch to authenticate</p>
+  </div>
+
+  <!-- Welcome message -->
+  <div class="welcome-msg" id="welcome-msg"></div>
+  <div class="welcome-sub" id="welcome-sub">your birthday surprise awaits 💚</div>
+
+  <!-- Enter button -->
+  <div class="enter-btn-wrap" id="enter-btn-wrap">
+    <a href="dukebox.html" class="btn btn-filled">Enter ✦</a>
+  </div>
+
+
+
+
+<script src="script.js"></script>
+<script>
+let scanned = false;
+
+function startScan() {
+  if (scanned) return;
+  scanned = true;
+
+  const scanner = document.getElementById('scanner');
+  const label   = document.getElementById('scanner-label');
+
+  scanner.classList.add('scanning');
+  label.textContent = 'scanning…';
+  label.style.animation = 'none';
+
+  // Try WebAuthn biometrics (works on supported devices)
+  if (window.PublicKeyCredential) {
+    navigator.credentials.get({
+      publicKey: {
+        challenge: new Uint8Array(32),
+        timeout: 60000,
+        userVerification: 'preferred',
+        rpId: window.location.hostname || 'localhost',
+        allowCredentials: []
+      }
+    }).then(() => authSuccess()).catch(() => authSuccess()); // fallback on any error
+  } else {
+    // No biometrics available — simulate scan after delay
+    setTimeout(authSuccess, 2000);
+  }
+}
+
+function authSuccess() {
+  const scanner  = document.getElementById('scanner');
+  const label    = document.getElementById('scanner-label');
+  const welcome  = document.getElementById('welcome-msg');
+  const sub      = document.getElementById('welcome-sub');
+  const enterBtn = document.getElementById('enter-btn-wrap');
+  const menu     = document.getElementById('page-menu');
+
+  label.textContent = '✓ verified';
+  label.style.color = 'var(--matcha-dark)';
+  label.style.animation = 'none';
+  label.style.opacity = '1';
+
+  // pulse success
+  scanner.style.boxShadow = '0 0 0 12px rgba(122,171,128,.3), 0 0 0 24px rgba(122,171,128,.12), 0 10px 50px rgba(46,92,56,.4)';
+
+  setTimeout(() => {
+    welcome.textContent = 'Welcome, Steffy 💚';
+    welcome.classList.add('show');
+    sub.classList.add('show');
+  }, 400);
+
+  setTimeout(() => {
+    enterBtn.classList.add('show');
+    menu.classList.add('show');
+  }, 1000);
+
+  // launch confetti
+  setTimeout(launchConfetti, 600);
+}
+
+function launchConfetti() {
+  const pieces = ['🍃','✦','🌸','✿','⋆','·'];
+  for (let i = 0; i < 24; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.style.cssText = `
+        position:fixed; z-index:999; pointer-events:none;
+        font-size:${.7+Math.random()*.9}rem;
+        left:${20+Math.random()*60}vw;
+        top:${10+Math.random()*40}vh;
+        animation:confettiFall ${1.2+Math.random()*.8}s ease forwards;
+      `;
+      p.textContent = pieces[Math.floor(Math.random()*pieces.length)];
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 2200);
+    }, i * 60);
+  }
+}
+</script>
+<style>
+@keyframes confettiFall {
+  from { opacity:1; transform:translateY(0) rotate(0deg); }
+  to   { opacity:0; transform:translateY(80px) rotate(360deg); }
+}
+</style>
+</body>
+</html>

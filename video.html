@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Message for Steffy 🎬</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body {
+  background:#0a100b;
+  color:#f0f5ee;
+  min-height:100vh;
+  padding-top:60px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* override nav for dark bg */
+.nav-bar { background:rgba(10,16,11,.88); border-bottom-color:rgba(122,171,128,.15); }
+.nav-links a { color:rgba(184,216,188,.7); }
+.nav-links a:hover,.nav-links a.active { color:var(--matcha-light); }
+.nav-logo { color:var(--matcha-light); }
+
+.vid-page { max-width:800px; width:100%; padding:3rem 1.5rem 4rem; text-align:center; }
+
+.page-title {
+  font-family:'Petit Formal Script',cursive; font-size:2.6rem; color:var(--matcha-light);
+  text-shadow:0 0 30px rgba(122,171,128,.4); margin-bottom:.3rem;
+}
+.page-sub { font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--matcha); font-size:.92rem; letter-spacing:.16em; opacity:.7; margin-bottom:2.5rem; }
+
+/* ── Film strip decoration ── */
+.filmstrip-top, .filmstrip-bot {
+  width:100%; height:32px; position:relative; overflow:hidden;
+  background:#0d160e; margin-bottom:0;
+}
+.filmstrip-top { border-radius:8px 8px 0 0; }
+.filmstrip-bot { border-radius:0 0 8px 8px; }
+.film-holes {
+  position:absolute; top:50%; transform:translateY(-50%);
+  display:flex; gap:14px; padding:0 10px;
+}
+.film-hole { width:18px; height:18px; border-radius:4px; background:#1a2e1a; border:1px solid #2a4a2a; flex-shrink:0; }
+
+/* ── Screen frame ── */
+.cinema-frame {
+  position:relative; border-left:12px solid #0d160e; border-right:12px solid #0d160e;
+  background:#050c06;
+  box-shadow:0 0 0 2px #1a2e1a, 0 30px 80px rgba(0,0,0,.8);
+}
+
+/* vignette overlay */
+.cinema-frame::after {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,.6) 100%);
+  z-index:2;
+}
+
+/* ── Video element ── */
+.video-wrap {
+  position:relative; width:100%; aspect-ratio:16/9;
+  background:#050c06; overflow:hidden;
+}
+.video-wrap video { width:100%; height:100%; object-fit:cover; display:block; }
+
+/* placeholder screen before video loaded */
+.vid-placeholder {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:1.2rem; z-index:3;
+  background:radial-gradient(ellipse at 50% 50%, #0e2016 0%, #050c06 70%);
+}
+.vid-placeholder.hidden { display:none; }
+.vid-ph-icon { font-size:3rem; opacity:.4; }
+.vid-ph-label {
+  font-family:'Raleway',sans-serif; font-weight:300; font-size:.72rem;
+  letter-spacing:.28em; text-transform:uppercase; color:var(--matcha-light); opacity:.5;
+}
+.vid-ph-drop {
+  border:1.5px dashed rgba(122,171,128,.35); border-radius:8px;
+  padding:.7rem 1.8rem; cursor:pointer; transition:all .3s;
+  font-size:.68rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--matcha-light); opacity:.6; position:relative;
+}
+.vid-ph-drop:hover { border-color:var(--matcha-light); opacity:1; }
+.vid-ph-drop input { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+
+/* ── Clapperboard animation on load ── */
+.clapper {
+  position:absolute; inset:0; z-index:10;
+  display:flex; align-items:center; justify-content:center;
+  background:#050c06; transition:opacity .8s ease;
+}
+.clapper.done { opacity:0; pointer-events:none; }
+.clapper-board {
+  text-align:center;
+  animation:clapperIn .6s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes clapperIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
+.clapper-text {
+  font-family:'Cormorant Garamond',serif; font-size:1.4rem;
+  color:var(--matcha-light); letter-spacing:.2em; font-style:italic;
+}
+.clapper-icon { font-size:3rem; animation:clapperBounce .4s ease .6s both; }
+@keyframes clapperBounce {
+  0%,100% { transform:rotate(0deg); }
+  50%     { transform:rotate(-20deg); }
+}
+
+/* ── Controls beneath ── */
+.vid-controls {
+  padding:1rem 1.2rem .8rem;
+  background:#0d160e;
+  border-radius:0 0 8px 8px;
+  display:flex; flex-direction:column; gap:.6rem;
+}
+
+.progress-row { display:flex; align-items:center; gap:.8rem; }
+.progress-bar-wrap { flex:1; height:3px; background:rgba(122,171,128,.2); border-radius:3px; cursor:pointer; position:relative; }
+.progress-fill { height:100%;border-radius:3px;background:linear-gradient(90deg,var(--matcha-dark),var(--matcha-light));width:0%;transition:width .25s; }
+.time-label { font-size:.6rem;color:var(--matcha-light);opacity:.5;white-space:nowrap; }
+
+.ctrl-row { display:flex; align-items:center; justify-content:center; gap:.8rem; }
+.c-btn {
+  background:transparent; border:1px solid rgba(122,171,128,.25);
+  border-radius:50%; width:36px;height:36px; display:flex;align-items:center;justify-content:center;
+  cursor:pointer; color:var(--matcha-light); font-size:.85rem; transition:all .25s;
+}
+.c-btn:hover { background:rgba(122,171,128,.15); border-color:var(--matcha); }
+.c-btn.big { width:48px;height:48px;font-size:1.1rem;background:rgba(122,171,128,.12);border-color:var(--matcha); }
+.c-btn.big:hover { background:var(--matcha-dark); }
+
+.vol-row { display:flex;align-items:center;gap:.5rem; }
+.vol-icon { font-size:.8rem;color:var(--matcha-light);opacity:.5; }
+.vol-bar { flex:1;-webkit-appearance:none;appearance:none;height:2px;background:rgba(122,171,128,.2);border-radius:2px;outline:none;cursor:pointer; }
+.vol-bar::-webkit-slider-thumb { -webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--matcha-light);cursor:pointer; }
+
+/* ── Scene title overlay ── */
+.scene-title {
+  position:absolute; bottom:2rem; left:0; right:0; text-align:center; z-index:5;
+  pointer-events:none; opacity:0; transition:opacity .5s;
+}
+.scene-title.show { opacity:1; }
+.scene-title-text {
+  font-family:'Petit Formal Script',cursive; font-size:1.4rem;
+  color:rgba(255,255,255,.85); text-shadow:0 2px 12px rgba(0,0,0,.8);
+}
+
+/* ── URL input ── */
+.url-row { display:flex;gap:.6rem;align-items:center;margin-top:1.2rem; }
+.url-inp {
+  flex:1;background:rgba(10,22,12,.8);border:1px solid rgba(122,171,128,.25);
+  color:var(--matcha-light);font-family:'Raleway',sans-serif;font-size:.78rem;
+  padding:.6rem 1rem;border-radius:6px;outline:none;transition:border-color .3s;letter-spacing:.04em;
+}
+.url-inp::placeholder { color:rgba(122,171,128,.3); }
+.url-inp:focus { border-color:var(--matcha); }
+.url-btn {
+  background:transparent;border:1px solid rgba(122,171,128,.3);color:var(--matcha-light);
+  font-family:'Raleway',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:.6rem 1rem;border-radius:6px;cursor:pointer;transition:all .25s;white-space:nowrap;
+}
+.url-btn:hover { background:var(--matcha-dark);color:var(--cream); }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<nav class="nav-bar">
+  <a class="nav-logo" href="index.html">Steffy 💚</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="dukebox.html">Jukebox</a>
+    <a href="giftbox.html">Gift</a>
+    <a href="flower.html">Flowers</a>
+    <a href="video.html">Video</a>
+    <a href="letter.html">Letter</a>
+  </div>
+</nav>
+
+<main class="vid-page">
+  <h1 class="page-title">A Message for You 🎬</h1>
+  <p class="page-sub">recorded from the heart</p>
+
+  <div class="filmstrip-top">
+    <div class="film-holes" id="film-top"></div>
+  </div>
+
+  <div class="cinema-frame">
+    <div class="video-wrap" id="video-wrap">
+
+      <div class="clapper" id="clapper">
+        <div class="clapper-board">
+          <div class="clapper-icon">🎬</div>
+          <div class="clapper-text">for Steffy,<br>with love</div>
+        </div>
+      </div>
+
+      <div class="vid-placeholder hidden" id="vid-placeholder">
+        <span class="vid-ph-icon">🎥</span>
+        <span class="vid-ph-label">your video message</span>
+        <div class="vid-ph-drop">
+          ＋ click to add video
+          <input type="file" accept="video/*" onchange="loadVidFile(this)">
+        </div>
+      </div>
+
+      <video id="main-vid" src="https://docs.google.com/uc?export=download&id=1r23NaGuBuUW5ZTrb2S61QnJOGwaMLqGG" preload="metadata" style="display:block"></video>
+
+      <div class="scene-title" id="scene-title">
+        <div class="scene-title-text" id="scene-title-text"></div>
+      </div>
+    </div>
+
+    <div class="vid-controls">
+      <div class="progress-row">
+        <span class="time-label" id="t-cur">0:00</span>
+        <div class="progress-bar-wrap" id="prog-wrap">
+          <div class="progress-fill" id="prog-fill"></div>
+        </div>
+        <span class="time-label" id="t-dur">0:00</span>
+      </div>
+      <div class="ctrl-row">
+        <button class="c-btn" id="btn-rew" title="−10s">⏪</button>
+        <button class="c-btn big" id="btn-play" title="Play">▶</button>
+        <button class="c-btn" id="btn-fwd" title="+10s">⏩</button>
+        <button class="c-btn" id="btn-mute" title="Mute">🔊</button>
+        <div class="vol-row" style="flex:1">
+          <input class="vol-bar" type="range" id="vid-vol" min="0" max="1" step=".02" value="1">
+        </div>
+        <button class="c-btn" id="btn-fs" title="Fullscreen">⛶</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filmstrip-bot">
+    <div class="film-holes" id="film-bot"></div>
+  </div>
+
+  <div class="url-row">
+    <input class="url-inp" id="url-inp" type="text" placeholder="Or paste a YouTube / video link…">
+    <button class="url-btn" onclick="loadVidUrl()">Load ↗</button>
+  </div>
+</main>
+
+<script src="script.js"></script>
+<script>
+const vid = document.getElementById('main-vid');
+
+// Build film holes
+['film-top','film-bot'].forEach(id=>{
+  const g = document.getElementById(id);
+  if(g) {
+    for(let i=0;i<24;i++){
+      const h=document.createElement('div'); h.className='film-hole'; g.appendChild(h);
+    }
+  }
+});
+
+// Dismiss clapper after 2s
+setTimeout(()=> document.getElementById('clapper').classList.add('done'), 2000);
+
+// NEW: Automatically trigger activation if a source exists
+window.addEventListener('load', () => {
+  if(vid.getAttribute('src')) {
+    activateVideo();
+  }
+});
+
+function fmtT(s){ if(!s||isNaN(s)) return '0:00'; const m=Math.floor(s/60),sc=Math.floor(s%60); return m+':'+(sc<10?'0':'')+sc; }
+
+function activateVideo() {
+  document.getElementById('vid-placeholder').classList.add('hidden');
+  vid.style.display='block';
+  showSceneTitle('Happy Birthday, Steffy 💚');
+}
+
+function showSceneTitle(text) {
+  const el = document.getElementById('scene-title');
+  const txtEl = document.getElementById('scene-title-text');
+  if(txtEl) txtEl.textContent = text;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 3500);
+}
+
+function loadVidFile(inp){
+  const f=inp.files[0]; if(!f) return;
+  vid.src = URL.createObjectURL(f);
+  activateVideo();
+}
+
+function loadVidUrl(){
+  let url = document.getElementById('url-inp').value.trim(); if(!url) return;
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if(yt){
+    const wrap = document.getElementById('video-wrap');
+    wrap.innerHTML = `
+      <iframe src="https://www.youtube.com/embed/${yt[1]}?autoplay=1" allowfullscreen
+        allow="autoplay;encrypted-media" style="width:100%;height:100%;display:block;border:none;position:absolute;inset:0;"></iframe>
+    `;
+    wrap.style.position='relative';
+  } else {
+    vid.src=url; activateVideo();
+  }
+}
+
+// Controls
+document.getElementById('btn-play').addEventListener('click',()=>{
+  if(vid.paused){ vid.play(); document.getElementById('btn-play').textContent='⏸'; }
+  else          { vid.pause(); document.getElementById('btn-play').textContent='▶';  }
+});
+document.getElementById('btn-rew').addEventListener('click',()=>{ vid.currentTime=Math.max(0,vid.currentTime-10); });
+document.getElementById('btn-fwd').addEventListener('click',()=>{ vid.currentTime=Math.min(vid.duration||0,vid.currentTime+10); });
+document.getElementById('btn-mute').addEventListener('click',()=>{
+  vid.muted=!vid.muted;
+  document.getElementById('btn-mute').textContent=vid.muted?'🔇':'🔊';
+});
+document.getElementById('btn-fs').addEventListener('click',()=>{
+  const wrap = document.getElementById('video-wrap');
+  if(wrap.requestFullscreen) wrap.requestFullscreen();
+});
+document.getElementById('vid-vol').addEventListener('input',e=>{ vid.volume=e.target.value; });
+
+vid.addEventListener('timeupdate',()=>{
+  const pct=vid.duration?(vid.currentTime/vid.duration)*100:0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('t-cur').textContent=fmtT(vid.currentTime);
+  document.getElementById('t-dur').textContent=fmtT(vid.duration);
+});
+document.getElementById('prog-wrap').addEventListener('click',e=>{
+  if(!vid.duration) return;
+  const r=e.currentTarget.getBoundingClientRect();
+  vid.currentTime=((e.clientX-r.left)/r.width)*vid.duration;
+});
+vid.addEventListener('ended',()=>{ document.getElementById('btn-play').textContent='▶'; showSceneTitle('The End — I love you 💚'); });
+</script>
+</body>
+</html>
