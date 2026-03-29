@@ -212,8 +212,6 @@ body { display:flex; flex-direction:column; align-items:center; justify-content:
 
 <script src="script.js"></script>
 <script>
-let scanned = false;
-
 function startScan() {
   if (scanned) return;
   scanned = true;
@@ -225,21 +223,9 @@ function startScan() {
   label.textContent = 'scanning…';
   label.style.animation = 'none';
 
-  // Try WebAuthn biometrics (works on supported devices)
-  if (window.PublicKeyCredential) {
-    navigator.credentials.get({
-      publicKey: {
-        challenge: new Uint8Array(32),
-        timeout: 60000,
-        userVerification: 'preferred',
-        rpId: window.location.hostname || 'localhost',
-        allowCredentials: []
-      }
-    }).then(() => authSuccess()).catch(() => authSuccess()); // fallback on any error
-  } else {
-    // No biometrics available — simulate scan after delay
-    setTimeout(authSuccess, 2000);
-  }
+  // We removed the "navigator.credentials.get" block to stop the USB prompt.
+  // This simulation will now wait 2 seconds and then succeed!
+  setTimeout(authSuccess, 2000);
 }
 
 function authSuccess() {
