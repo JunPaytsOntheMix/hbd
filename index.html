@@ -51,7 +51,6 @@ body { display:flex; flex-direction:column; align-items:center; justify-content:
     0 10px 50px rgba(46,92,56,.4);
 }
 
-/* spinning ring */
 .scanner::before {
   content:''; position:absolute; inset:-6px; border-radius:50%;
   border:2px solid transparent;
@@ -60,106 +59,31 @@ body { display:flex; flex-direction:column; align-items:center; justify-content:
 }
 @keyframes scanSpin { to{transform:rotate(360deg)} }
 
-/* fingerprint svg lines */
-.fp-svg {
-  width:72px; height:72px; opacity:.9;
-  filter:drop-shadow(0 0 8px rgba(255,255,255,.5));
-}
-.fp-line {
-  stroke:#e8f5e9; stroke-width:2.2; fill:none; stroke-linecap:round;
-  stroke-dasharray:200; stroke-dashoffset:200;
-}
-.scanner.scanning .fp-line {
-  animation:scanLine 1.8s ease forwards;
-}
-@keyframes scanLine {
-  to { stroke-dashoffset:0; }
-}
+.fp-svg { width:72px; height:72px; opacity:.9; filter:drop-shadow(0 0 8px rgba(255,255,255,.5)); }
+.fp-line { stroke:#e8f5e9; stroke-width:2.2; fill:none; stroke-linecap:round; stroke-dasharray:200; stroke-dashoffset:200; }
+.scanner.scanning .fp-line { animation:scanLine 1.8s ease forwards; }
+@keyframes scanLine { to { stroke-dashoffset:0; } }
 
-/* scan pulse */
-.scan-pulse {
-  position:absolute; inset:0; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(255,255,255,.45) 0%, transparent 70%);
-  opacity:0;
-}
+.scan-pulse { position:absolute; inset:0; border-radius:50%; pointer-events:none; background:radial-gradient(circle, rgba(255,255,255,.45) 0%, transparent 70%); opacity:0; }
 .scanner.scanning .scan-pulse { animation:pulse 1.8s ease forwards; }
 @keyframes pulse { 0%{opacity:0} 30%{opacity:.6} 100%{opacity:0} }
 
-/* ── Scan beam ── */
-.scan-beam {
-  position:absolute; left:0; right:0; height:3px;
-  background:linear-gradient(90deg, transparent, rgba(200,240,200,.8), transparent);
-  top:50%; transform:translateY(-50%);
-  opacity:0; pointer-events:none;
-}
+.scan-beam { position:absolute; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, rgba(200,240,200,.8), transparent); top:50%; transform:translateY(-50%); opacity:0; pointer-events:none; }
 .scanner.scanning .scan-beam { animation:beamSweep 1.8s ease forwards; }
-@keyframes beamSweep {
-  0%   { opacity:0; top:10%; }
-  20%  { opacity:1; }
-  80%  { opacity:1; }
-  100% { opacity:0; top:90%; }
-}
+@keyframes beamSweep { 0% { opacity:0; top:10%; } 20% { opacity:1; } 80% { opacity:1; } 100% { opacity:0; top:90%; } }
 
-.scanner-label {
-  margin-top:1.4rem; font-size:.68rem; letter-spacing:.3em; text-transform:uppercase;
-  color:var(--matcha-dark); opacity:.65;
-  animation:labelBlink 2s ease-in-out infinite;
-}
+.scanner-label { margin-top:1.4rem; font-size:.68rem; letter-spacing:.3em; text-transform:uppercase; color:var(--matcha-dark); opacity:.65; animation:labelBlink 2s ease-in-out infinite; }
 @keyframes labelBlink { 0%,100%{opacity:.45} 50%{opacity:.9} }
 
-/* ── Welcome message ── */
-.welcome-msg {
-  margin-top:2.8rem;
-  font-family:'Petit Formal Script',cursive;
-  font-size:clamp(1.6rem,5vw,2.4rem);
-  color:var(--matcha-deep);
-  opacity:0; transform:scale(.9) translateY(10px);
-  transition:opacity .8s ease, transform .8s ease;
-  text-shadow:0 2px 16px rgba(46,92,56,.2);
-  min-height:3rem;
-}
+.welcome-msg { margin-top:2.8rem; font-family:'Petit Formal Script',cursive; font-size:clamp(1.6rem,5vw,2.4rem); color:var(--matcha-deep); opacity:0; transform:scale(.9) translateY(10px); transition:opacity .8s ease, transform .8s ease; text-shadow:0 2px 16px rgba(46,92,56,.2); min-height:3rem; }
 .welcome-msg.show { opacity:1; transform:none; }
-
-.welcome-sub {
-  font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1rem;
-  color:var(--matcha); letter-spacing:.15em; margin-top:.5rem;
-  opacity:0; transition:opacity .6s ease .4s;
-}
+.welcome-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1rem; color:var(--matcha); letter-spacing:.15em; margin-top:.5rem; opacity:0; transition:opacity .6s ease .4s; }
 .welcome-sub.show { opacity:.8; }
 
-/* ── Enter button ── */
-.enter-btn-wrap {
-  margin-top:2.5rem; opacity:0; transform:translateY(10px);
-  transition:opacity .6s ease .6s, transform .6s ease .6s;
-}
+.enter-btn-wrap { margin-top:2.5rem; opacity:0; transform:translateY(10px); transition:opacity .6s ease .6s, transform .6s ease .6s; }
 .enter-btn-wrap.show { opacity:1; transform:none; }
 
-/* ── Nav menu (shown after auth) ── */
-.page-menu {
-  margin-top:3.5rem; display:grid; grid-template-columns:repeat(3,1fr);
-  gap:1rem; max-width:520px; width:90vw; opacity:0; transition:opacity .5s ease .8s;
-}
-.page-menu.show { opacity:1; }
-
-.menu-card {
-  background:rgba(255,255,255,.5); border:1px solid rgba(122,171,128,.35);
-  border-radius:14px; padding:1.2rem .8rem; text-align:center; text-decoration:none;
-  transition:all .3s; backdrop-filter:blur(8px);
-}
-.menu-card:hover {
-  background:rgba(255,255,255,.8); transform:translateY(-4px);
-  box-shadow:0 8px 24px var(--shadow); border-color:var(--matcha);
-}
-.menu-card-icon { font-size:1.6rem; display:block; margin-bottom:.4rem; }
-.menu-card-label {
-  font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
-  color:var(--matcha-dark); font-weight:300;
-}
-
-/* ── Decorative blobs ── */
-.blob {
-  position:fixed; border-radius:50%; pointer-events:none; z-index:0; filter:blur(60px);
-}
+.blob { position:fixed; border-radius:50%; pointer-events:none; z-index:0; filter:blur(60px); }
 .blob1 { width:320px;height:320px;background:rgba(122,171,128,.18);top:-80px;left:-80px; }
 .blob2 { width:260px;height:260px;background:rgba(200,168,75,.12);bottom:-60px;right:-60px; }
 .blob3 { width:200px;height:200px;background:rgba(122,171,128,.12);bottom:20%;left:10%; }
@@ -177,14 +101,11 @@ body { display:flex; flex-direction:column; align-items:center; justify-content:
   <h1 class="entry-title">Happy Birthday, Steffy</h1>
   <p class="entry-date">something special is waiting for you</p>
 
-  <!-- Fingerprint scanner -->
   <div class="scanner-wrap">
     <div class="scanner" id="scanner" onclick="startScan()">
       <div class="scan-beam"></div>
       <div class="scan-pulse"></div>
-      <!-- Fingerprint lines as SVG -->
       <svg class="fp-svg" viewBox="0 0 72 72">
-        <!-- outer arcs - fingerprint look -->
         <path class="fp-line" d="M 36 8 C 18 8 6 21 6 36 C 6 52 18 65 36 65" style="animation-delay:.0s"/>
         <path class="fp-line" d="M 36 8 C 54 8 66 21 66 36 C 66 52 54 65 36 65" style="animation-delay:.08s"/>
         <path class="fp-line" d="M 36 15 C 22 15 13 24 13 36 C 13 49 22 58 36 58" style="animation-delay:.16s"/>
@@ -198,20 +119,18 @@ body { display:flex; flex-direction:column; align-items:center; justify-content:
     <p class="scanner-label" id="scanner-label">touch to authenticate</p>
   </div>
 
-  <!-- Welcome message -->
   <div class="welcome-msg" id="welcome-msg"></div>
   <div class="welcome-sub" id="welcome-sub">your birthday surprise awaits 💚</div>
 
-  <!-- Enter button -->
   <div class="enter-btn-wrap" id="enter-btn-wrap">
     <a href="dukebox.html" class="btn btn-filled">Enter ✦</a>
   </div>
-
-
-
+</main>
 
 <script src="script.js"></script>
 <script>
+let scanned = false;
+
 function startScan() {
   if (scanned) return;
   scanned = true;
@@ -223,8 +142,7 @@ function startScan() {
   label.textContent = 'scanning…';
   label.style.animation = 'none';
 
-  // We removed the "navigator.credentials.get" block to stop the USB prompt.
-  // This simulation will now wait 2 seconds and then succeed!
+  // FIXED: No more biometric prompt. Just a 2-second simulation.
   setTimeout(authSuccess, 2000);
 }
 
@@ -234,14 +152,12 @@ function authSuccess() {
   const welcome  = document.getElementById('welcome-msg');
   const sub      = document.getElementById('welcome-sub');
   const enterBtn = document.getElementById('enter-btn-wrap');
-  const menu     = document.getElementById('page-menu');
 
   label.textContent = '✓ verified';
   label.style.color = 'var(--matcha-dark)';
   label.style.animation = 'none';
   label.style.opacity = '1';
 
-  // pulse success
   scanner.style.boxShadow = '0 0 0 12px rgba(122,171,128,.3), 0 0 0 24px rgba(122,171,128,.12), 0 10px 50px rgba(46,92,56,.4)';
 
   setTimeout(() => {
@@ -252,10 +168,8 @@ function authSuccess() {
 
   setTimeout(() => {
     enterBtn.classList.add('show');
-    menu.classList.add('show');
   }, 1000);
 
-  // launch confetti
   setTimeout(launchConfetti, 600);
 }
 
@@ -286,3 +200,4 @@ function launchConfetti() {
 </style>
 </body>
 </html>
+
